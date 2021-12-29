@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+        <link rel="stylesheet" href="/style.css" type="text/css">
+        <title>InfoCity</title>
+    </head>
+       <nav class="navbar navbar-dark bg-dark" style="background-color: rgb(27, 27, 156); margin-left: -400px; margin-top: -100px;width: 1520px; height: 100px;">
+        <h2 class="navbar-brand" style="margin-left: 620px; margin-top: -80px; color: rgb(216, 216, 48);" >Україна.ua</h2>
+      </nav>
+    <body style="margin-left: 400px; margin-top: 100px;">
+        <label for="city" style="margin-left: 0px; margin-top: 50px; font-size: 30px;">Виберіть місто: </label>
+        <select class="city" id="city" style="margin-left: 0px; margin-top: 5px;">
+            <option value="">--Зробіть вибір--</option>
+            <option value="Kiev">Київ</option>
+            <option value="Kharkiv">Харків</option>
+            <option value="Lviv">Львів</option>
+            <option value="Odessa">Одеса</option>
+            <option value="Dnipro">Дніпро</option>
+            <option value="Uzhgorod">Ужгород</option>
+            <option value="Chernihiv">Чернігів</option>
+            <option value="Sumy">Суми</option>
+
+        </select>
+        <body>
+            <div class="container" style="margin-left: 0px; " >
+                <label for="" style="font-size: 30px;">Новини</label>
+                <ul class="news-list"></ul>
+            </div>
+        </body>
+        <body>
+            <div class="weather" >
+                <label for="" style="font-size: 30px;">Погода</label>
+                <div >
+                    <h4 class="weather__forecast" style="font-size: 21px; margin-left: 100px; margin-top: 10px;"></h4>
+                    <h4 class="weather__icon" style="margin-top: -70px; "></h4>
+                    <h4 class="weather__desc" style = "margin-left: 100px; margin-top: -80px; font-size: 21px;"></h4>
+                    <h4 class="weather__humidity" style=" font-size: 21px; margin-left: 100px; margin-top: -20px;"></h4>
+                    <h4 class="weather__wind" style=" font-size: 21px; margin-left: 100px; margin-top: -15px;"></h4>
+                </div>
+
+            </div>
+        </body>
+        <body>
+            <div class="covid">
+                <label for="" style="font-size: 30px; margin-top: 100px; ">Статистика по Covid-19 на всій території України</label>
+                <label for="" class="flag"></label>
+                <h4 id="confirmed" style="font-size: 21px; color: rgb(97, 47, 0); margin-left: 150px; margin-top: 20px;">Всього підтверджено: </h4>
+                <h4 id="recovered" style="font-size: 21px; color: rgb(0, 179, 0); margin-left: 150px; margin-top: 20px;">Повністю одужали: </h4>
+                <h4 id="deaths" style="font-size: 21px; color: rgb(201, 0, 0); margin-left: 150px; ">Летальних наслідків: </h4>    
+        </body>
+        <body>
+            <label for="" style="font-size: 30px; margin-top: 30px;">Визначні місця </label>
+            <div class="arch" style="font-size: 21px;" >
+            </div>
+        </body>
+       
+
+        <script>
+            const newsList = document.querySelector('.news-list');
+            var select = document.querySelector('select');
+
+            select.addEventListener('change', setsity);
+
+            function setsity(e) {
+                var choice = select.value;
+                newsList.innerHTML = ' '
+
+                e.preventDefault()
+                const apiKey = '25ffd62d4d1343f08f807a88597f8059'
+                
+                if (choice === 'Kiev') {
+                    let topic = "Київ";
+                    let url = `https://newsapi.org/v2/everything?q=${topic}&apiKey=${apiKey}`
+                    
+
+
+                    fetch(url).then((res)=>{
+                        return res.json()
+                    }).then((data)=>{
+                        
+                        console.log(data)
+                        fetch('http://api.openweathermap.org/data/2.5/weather?id=703448&lang=ua&appid=271d1234d3f497eed5b1d80a07b3fcd1').then(function (resp) {return resp.json() }).then(function (data) {
+                        document.querySelector('.weather__forecast').innerHTML = "Температура  " + Math.round(data.main.temp - 274) + '&deg;';
+                        document.querySelector('.weather__desc').textContent = data.weather[0]['description'];
+                        document.querySelector('.weather__humidity').textContent = "Вологість: " + data.main.humidity + " %";
+                        document.querySelector('.weather__wind').textContent = "Швидкість вітру:  " + data.wind.speed + " км/год";
+                        document.querySelector('.weather__icon').innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0]['icon']}@2x.png">`;
+                        
+                        })
+                        .catch(function () {
+                        });
+                        
+                        
+                        data.articles.forEach(article =>{
+                            let li = document.createElement('li');
+                            let a = document.createElement('a');
+                            a.setAttribute('href', article.url);
+                            a.setAttribute('target', '_blank')
+                            a.textContent = article.title;
+                            li.appendChild(a);
+                            newsList.appendChild(li);
+                        })
+
+                    
+
+                        
+                    }).catch((error)=>{
+                        console.log(error)
+                    })
+                } else if (choice === 'Kharkiv') {
+                    let topic = "Харків";
+                    let url = `https://newsapi.org/v2/everything?q=${topic}&apiKey=${apiKey}`;
+                    fetch(url).then((res)=>{
+                        return res.json()
+                    }).then((data)=>{
+                        console.log(data)
+                        fetch('http://api.openweathermap.org/data/2.5/weather?id=706483&lang=ua&appid=271d1234d3f497eed5b1d80a07b3fcd1').then(function (resp) {return resp.json() }).then(function (data) {
+                        document.querySelector('.weather__forecast').innerHTML = "Температура  " + Math.round(data.main.temp - 273) + '&deg;';
+                        document.querySelector('.weather__desc').textContent = data.weather[0]['description'];
+                        document.querySelector('.weather__humidity').textContent = "Вологість: " + data.main.humidity + " %";
+                        document.querySelector('.weather__wind').textContent = "Швидкість вітру:  " + data.wind.speed + " км/год";
+                        document.querySelector('.weather__icon').innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0]['icon']}@2x.png">`;
+                        })
+                        .catch(function () {
+                        });
+                        data.articles.forEach(article =>{
+                            let li = document.createElement('li');
+                            let a = document.createElement('a');
+                            a.setAttribute('href', article.url);
+                            a.setAttribute('target', '_blank')
+                            a.textContent = article.title;
+                            li.appendChild(a);
+                            newsList.appendChild(li);
+                        })
+                        
+                    }).catch((error)=>{
+                        console.log(error)
+                    })
+                } else if (choice === 'Lviv') {
+                    let topic = "Львів";
+                    let url = `https://newsapi.org/v2/everything?q=${topic}&apiKey=${apiKey}`;
+                    fetch(url).then((res)=>{
+                        return res.json()
+                    }).then((data)=>{
+                        console.log(data)
+                        fetch('http://api.openweathermap.org/data/2.5/weather?id=702550&lang=ua&appid=271d1234d3f497eed5b1d80a07b3fcd1').then(function (resp) {return resp.json() }).then(function (data) {
+                        document.querySelector('.weather__forecast').innerHTML = "Температура  " + Math.round(data.main.temp - 273) + '&deg;';
+                        document.querySelector('.weather__desc').textContent = data.weather[0]['description'];
+                        document.querySelector('.weather__humidity').textContent = "Вологість: " + data.main.humidity + " %";
+                        document.querySelector('.weather__wind').textContent = "Швидкість вітру:  " + data.wind.speed + " км/год";
+                        document.querySelector('.weather__icon').innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0]['icon']}@2x.png">`;
+                        })
+                        .catch(function () {
+                        });
+                        data.articles.forEach(article =>{
+                            let li = document.createElement('li');
+                            let a = document.createElement('a');
+                            a.setAttribute('href', article.url);
+                            a.setAttribute('target', '_blank')
+                            a.textContent = article.title;
+                            li.appendChild(a);
+                            newsList.appendChild(li);
+                        })
+                        
+                    }).catch((error)=>{
+                        console.log(error)
+                    })
+                } else if (choice === 'Odessa') {
+                    let topic = "Одеса";
+                    let url = `https://newsapi.org/v2/everything?q=${topic}&apiKey=${apiKey}`;
+                    fetch(url).then((res)=>{
+                        return res.json()
+                    }).then((data)=>{
+                        console.log(data)
+                        fetch('http://api.openweathermap.org/data/2.5/weather?id=698740&lang=ua&appid=271d1234d3f497eed5b1d80a07b3fcd1').then(function (resp) {return resp.json() }).then(function (data) {
+                        document.querySelector('.weather__forecast').innerHTML = "Температура  " + Math.round(data.main.temp - 273) + '&deg;';
+                        document.querySelector('.weather__desc').textContent = data.weather[0]['description'];
+                        document.querySelector('.weather__humidity').textContent = "Вологість: " + data.main.humidity + " %";
+                        document.querySelector('.weather__wind').textContent = "Швидкість вітру:  " + data.wind.speed + " км/год";
+                        document.querySelector('.weather__icon').innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0]['icon']}@2x.png">`;
+                        })
+                        .catch(function () {
+                        });
+                        data.articles.forEach(article =>{
+                            let li = document.createElement('li');
+                            let a = document.createElement('a');
+                            a.setAttribute('href', article.url);
+                            a.setAttribute('target', '_blank')
+                            a.textContent = article.title;
+                            li.appendChild(a);
+                            newsList.appendChild(li);
+                        })
+                        
+                        
+                    }).catch((error)=>{
+                        console.log(error)
+                    })
+
+                } else if (choice === 'Dnipro') {
+                    let topic = "Дніпро";
+                    let url = `https://newsapi.org/v2/everything?q=${topic}&apiKey=${apiKey}`;
+                    fetch(url).then((res)=>{
+                        return res.json()
+                    }).then((data)=>{
+                        console.log(data)
+                        fetch('http://api.openweathermap.org/data/2.5/weather?id=709930&lang=ua&appid=271d1234d3f497eed5b1d80a07b3fcd1').then(function (resp) {return resp.json() }).then(function (data) {
+                        document.querySelector('.weather__forecast').innerHTML = "Температура  " + Math.round(data.main.temp - 273) + '&deg;';
+                        document.querySelector('.weather__desc').textContent = data.weather[0]['description'];
+                        document.querySelector('.weather__humidity').textContent = "Вологість: " + data.main.humidity + " %";
+                        document.querySelector('.weather__wind').textContent = "Швидкість вітру:  " + data.wind.speed + " км/год";
+                        document.querySelector('.weather__icon').innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0]['icon']}@2x.png">`;
+                        })
+                        .catch(function () {
+                        });
+                        data.articles.forEach(article =>{
+                            let li = document.createElement('li');
+                            let a = document.createElement('a');
+                            a.setAttribute('href', article.url);
+                            a.setAttribute('target', '_blank')
+                            a.textContent = article.title;
+                            li.appendChild(a);
+                            newsList.appendChild(li);
+                        })
+                        
+                        
+                    }).catch((error)=>{
+                        console.log(error)
+                    })
+
+                } else if (choice === 'Uzhgorod') {
+                    let topic = "Ужгород";
+                    let url = `https://newsapi.org/v2/everything?q=${topic}&apiKey=${apiKey}`;
+                    fetch(url).then((res)=>{
+                        return res.json()
+                    }).then((data)=>{
+                        console.log(data)
+                        fetch('http://api.openweathermap.org/data/2.5/weather?id=690548&lang=ua&appid=271d1234d3f497eed5b1d80a07b3fcd1').then(function (resp) {return resp.json() }).then(function (data) {
+                        document.querySelector('.weather__forecast').innerHTML = "Температура  " + Math.round(data.main.temp - 273) + '&deg;';
+                        document.querySelector('.weather__desc').textContent = data.weather[0]['description'];
+                        document.querySelector('.weather__humidity').textContent = "Вологість: " + data.main.humidity + " %";
+                        document.querySelector('.weather__wind').textContent = "Швидкість вітру:  " + data.wind.speed + " км/год";
+                        document.querySelector('.weather__icon').innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0]['icon']}@2x.png">`;
+                        })
+                        .catch(function () {
+                        });
+                        data.articles.forEach(article =>{
+                            let li = document.createElement('li');
+                            let a = document.createElement('a');
+                            a.setAttribute('href', article.url);
+                            a.setAttribute('target', '_blank')
+                            a.textContent = article.title;
+                            li.appendChild(a);
+                            newsList.appendChild(li);
+                        })
+                        
+                        
+                    }).catch((error)=>{
+                        console.log(error)
+                    })
+
+                } else if (choice === 'Chernihiv') {
+                    let topic = "Чернігів";
+                    let url = `https://newsapi.org/v2/everything?q=${topic}&apiKey=${apiKey}`;
+                    fetch(url).then((res)=>{
+                        return res.json()
+                    }).then((data)=>{
+                        console.log(data)
+                        fetch('http://api.openweathermap.org/data/2.5/weather?id=710735&lang=ua&appid=271d1234d3f497eed5b1d80a07b3fcd1').then(function (resp) {return resp.json() }).then(function (data) {
+                        document.querySelector('.weather__forecast').innerHTML = "Температура  " + Math.round(data.main.temp - 273) + '&deg;';
+                        document.querySelector('.weather__desc').textContent = data.weather[0]['description'];
+                        document.querySelector('.weather__humidity').textContent = "Вологість: " + data.main.humidity + " %";
+                        document.querySelector('.weather__wind').textContent = "Швидкість вітру:  " + data.wind.speed + " км/год";
+                        document.querySelector('.weather__icon').innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0]['icon']}@2x.png">`;
+                        })
+                        .catch(function () {
+                        });
+                        data.articles.forEach(article =>{
+                            let li = document.createElement('li');
+                            let a = document.createElement('a');
+                            a.setAttribute('href', article.url);
+                            a.setAttribute('target', '_blank')
+                            a.textContent = article.title;
+                            li.appendChild(a);
+                            newsList.appendChild(li);
+                        })
+                        
+                        
+                    }).catch((error)=>{
+                        console.log(error)
+                    })
+
+                } else if (choice === 'Sumy') {
+                    let topic = "Суми";
+                    let url = `https://newsapi.org/v2/everything?q=${topic}&apiKey=${apiKey}`;
+                    fetch(url).then((res)=>{
+                        return res.json()
+                    }).then((data)=>{
+                        console.log(data)
+                        fetch('http://api.openweathermap.org/data/2.5/weather?id=692194&lang=ua&appid=271d1234d3f497eed5b1d80a07b3fcd1').then(function (resp) {return resp.json() }).then(function (data) {
+                        document.querySelector('.weather__forecast').innerHTML = "Температура  " + Math.round(data.main.temp - 273) + '&deg;';
+                        document.querySelector('.weather__desc').textContent = data.weather[0]['description'];
+                        document.querySelector('.weather__humidity').textContent = "Вологість: " + data.main.humidity + " %";
+                        document.querySelector('.weather__wind').textContent = "Швидкість вітру:  " + data.wind.speed + " км/год";
+                        document.querySelector('.weather__icon').innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0]['icon']}@2x.png">`;
+                        })
+                        .catch(function () {
+                        });
+                        data.articles.forEach(article =>{
+                            let li = document.createElement('li');
+                            let a = document.createElement('a');
+                            a.setAttribute('href', article.url);
+                            a.setAttribute('target', '_blank')
+                            a.textContent = article.title;
+                            li.appendChild(a);
+                            newsList.appendChild(li);
+                        })
+                        
+                        
+                    }).catch((error)=>{
+                        console.log(error)
+                    })
+
+                } 
+            }
+            
+
+            
+        </script>
+        <script>
+            var select = document.querySelector('select');
+            const cov = document.querySelector('.covid');
+            select.addEventListener('change', function(e){
+                var choice = select.value;
+                e.preventDefault()
+                if (choice === 'Kiev') {
+                    var country = "Ukraine";
+                    var url = "https://api.covid19api.com/total/dayone/country/ukraine"
+                    fetch(url)
+                    .then((res) => res.json())
+                    .then((res) => {
+                        console.log(res)
+                        var length = res.length
+                        var index = 519
+                        var confirmed = document.getElementById('confirmed')
+                        var recovered = document.getElementById('recovered')
+                        var deaths = document.getElementById('deaths')
+                        confirmed.append(res[index].Confirmed)
+                        recovered.append(res[index].Recovered)
+                        deaths.append(res[index].Deaths)
+
+                    })
+                }
+            });
+
+            
+
+        </script>
+        <script>
+            const arc = document.querySelector('.arch');
+            var select = document.querySelector('select');
+
+            select.addEventListener('change', setarch);
+
+            function setarch(e) {
+                var choice = select.value;
+                arc.innerHTML = ' '
+
+                e.preventDefault()
+                
+                if (choice === 'Kiev') {
+                    list_link=['https://eventukraine.com/travel/12-cikavih-misc-kiieva-yaki-varto-vidvidati/']
+                    list_content=['12 цікавих місць Києва, які варто відвідати']
+                    for (i=0; i < list_content.length; i++){
+                        let li = document.createElement('li');
+                        let a = document.createElement('a');
+                        a.setAttribute('href', list_link[i]);
+                        a.setAttribute('target', '_blank')
+                        a.textContent = list_content[i];
+                        li.appendChild(a);
+                        arc.appendChild(li);
+                    }
+
+                }
+                else if (choice === 'Kharkiv'){
+                    list_link=['https://www.dobovo.com/blog/uk/%D1%85%D0%B0%D1%80%D0%BA%D1%96%D0%B2-%D0%BA%D1%83%D0%B4%D0%B8-%D0%BF%D1%96%D1%82%D0%B8-%D1%82%D0%BE%D0%BF-10-%D0%BC%D1%96%D1%81%D1%86%D1%8C.html'];
+                    list_content=['ТОП-10 місць Харкова для обов’язкового відвідування'];
+                    for (i=0; i < list_content.length; i++){
+                        let li = document.createElement('li');
+                        let a = document.createElement('a');
+                        a.setAttribute('href', list_link[i]);
+                        a.setAttribute('target', '_blank')
+                        a.textContent = list_content[i];
+                        li.appendChild(a);
+                        arc.appendChild(li);
+                    }
+                }
+                else if (choice === 'Lviv'){
+                    list_link=['https://eventukraine.com/travel/10-najcikavishih-misc-u-lvovi/'];
+                    list_content=['10 найцікавіших місць у Львові'];
+                    for (i=0; i < list_content.length; i++){
+                        let li = document.createElement('li');
+                        let a = document.createElement('a');
+                        a.setAttribute('href', list_link[i]);
+                        a.setAttribute('target', '_blank')
+                        a.textContent = list_content[i];
+                        li.appendChild(a);
+                        arc.appendChild(li);
+                    }
+                }
+                else if (choice === 'Odessa'){
+                    list_link=['https://eventukraine.com/travel/shho-varto-pobachiti-v-odesi-10-najcikavishih-misc/'];
+                    list_content=['10 найцікавіших місць в Одесі'];
+                    for (i=0; i < list_content.length; i++){
+                        let li = document.createElement('li');
+                        let a = document.createElement('a');
+                        a.setAttribute('href', list_link[i]);
+                        a.setAttribute('target', '_blank')
+                        a.textContent = list_content[i];
+                        li.appendChild(a);
+                        arc.appendChild(li);
+                    }
+                }
+                else if (choice === 'Dnipro'){
+                    list_link=['https://eventukraine.com/travel/nezvichajne-misto-dnipro-najcikavishi-miscya/'];
+                    list_content=['Незвичайне місто Дніпро: найцікавіші місця'];
+                    for (i=0; i < list_content.length; i++){
+                        let li = document.createElement('li');
+                        let a = document.createElement('a');
+                        a.setAttribute('href', list_link[i]);
+                        a.setAttribute('target', '_blank')
+                        a.textContent = list_content[i];
+                        li.appendChild(a);
+                        arc.appendChild(li);
+                    }
+                }
+                else if (choice === 'Uzhgorod'){
+                    list_link=['http://codeschool.uzhnu.edu.ua/newspaper/15-%D0%BC%D1%96%D1%81%D1%86%D1%8C-%D1%8F%D0%BA%D1%96-%D0%B2%D0%B0%D1%80%D1%82%D0%BE-%D0%B2%D1%96%D0%B4%D0%B2%D1%96%D0%B4%D0%B0%D1%82%D0%B8-%D0%B2-%D1%83%D0%B6%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D1%96/'];
+                    list_content=['16 місць, які варто відвідати в Ужгороді'];
+                    for (i=0; i < list_content.length; i++){
+                        let li = document.createElement('li');
+                        let a = document.createElement('a');
+                        a.setAttribute('href', list_link[i]);
+                        a.setAttribute('target', '_blank')
+                        a.textContent = list_content[i];
+                        li.appendChild(a);
+                        arc.appendChild(li);
+                    }
+                }
+                else if (choice === 'Chernihiv'){
+                    list_link=['https://discover.ua/inspiration/pocuvstvuj-velicie-drevnego-goroda-ili-cto-posmotret-v-cernigove'];
+                    list_content=['Що подивитись в Чернігові?'];
+                    for (i=0; i < list_content.length; i++){
+                        let li = document.createElement('li');
+                        let a = document.createElement('a');
+                        a.setAttribute('href', list_link[i]);
+                        a.setAttribute('target', '_blank')
+                        a.textContent = list_content[i];
+                        li.appendChild(a);
+                        arc.appendChild(li);
+                    }
+                }
+                else if (choice === 'Sumy'){
+                    list_link=['http://itinery.com.ua/article/view/chto-nado-objazatelno-uvydet-esly-vy-vpervye-v-sumah'];
+                    list_content=['Що треба  побачити в Сумах?'];
+                    for (i=0; i < list_content.length; i++){
+                        let li = document.createElement('li');
+                        let a = document.createElement('a');
+                        a.setAttribute('href', list_link[i]);
+                        a.setAttribute('target', '_blank')
+                        a.textContent = list_content[i];
+                        li.appendChild(a);
+                        arc.appendChild(li);
+                    }
+                }
+            }
+        </script>
+        
+       
+
+        
+    </body>
+    <body>
+        <div>
+            <label for="" style="background-color: orange; width: 500px; margin-left: 500px;"></label>
+        </div>
+    </body>
+</html>
+
+
+
+
